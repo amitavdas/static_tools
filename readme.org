@@ -11,15 +11,18 @@ Different toolchain (targetting other platform) may also work.
 Features:
     + static bash with readline support.
     + static vim with normal features (can be built with huge also).
-    + static rsync with xxhash support.
+    + static rsync with xxhash (statically linked) support.
       * zstd, lz4, openssl are not supported yet
     + static coreutils
+    + static tmux
 
-Only vim and bash has been somewhat tested.
+Partially Tested:
+    - bash
+    - vim
+    - tmux
 
 Issues:
-    + 06_xxhash +does not work+ works but xxhsum binaries are not static.
-    + 07_rsync  builds +without+ with xxhash statically linked.
+    + 06_xxhash +does not work+ builds, but xxhsum binaries are not static, only the libs.
 
 May fix this in future.
 

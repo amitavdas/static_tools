@@ -1,0 +1,40 @@
+#!/bin/bash
+
+source ./00_preprocessing
+
+v_Package_name='libevent'
+v_Package_version='2.1.12'
+
+v_Package_archive="${PWD}/${v_Package_name}-${v_Package_version}.tar.gz"
+
+[ -f "${v_Package_archive}" ] || wget --continue --output-document="${v_Package_archive}" "https://github.com/libevent/libevent/releases/download/release-${v_Package_version}-stable/libevent-${v_Package_version}-stable.tar.gz"
+
+cd "${v_Build_Dir}" || exit 1
+
+v_Package_dir="${v_Package_name}-${v_Package_version}-stable"
+
+[ -d "${v_Package_dir}" ] && rm -rf "${v_Package_dir}"
+
+tar -xf "${v_Package_archive}"
+
+cd "${v_Package_dir}"
+
+v_Package_Prefix="${v_Prefix_Dir}/${v_Package_name}" 
+
+[ -d "${v_Package_Prefix}" ] && rm -rf "${v_Package_Prefix}" 
+
+export CFLAGS="-static -Os"
+export CFLAGS="${CFLAGS} -I${v_Prefix_Dir}/include"
+export LDFLAGS="-L${v_Prefix_Dir}/lib -static"
+
+./configure --prefix="${v_Prefix_Dir}" \
+	    --host="${v_Host_Platform}" \
+	    --build="${v_Build_Platform}" \
+	    --enable-static \
+	    --disable-openssl
+
+make -j3
+make install && echo $?
+# make INSTALLCMD="install -c --strip-program=${v_Strip_Program}" install-strip ; echo "make exited with status: ${?}"
+# mkdir -p "${v_Release_Dir}"
+#cp --no-dereference "${v_Package_Prefix}/bin/"* "${v_Release_Dir}"

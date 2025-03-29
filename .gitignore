@@ -14,3 +14,4 @@ libdaemon*/
 libexpat*/
 coreutils*/
 libevent-*/
+tmux*/

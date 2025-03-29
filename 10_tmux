@@ -1,0 +1,40 @@
+#!/bin/bash
+
+source ./00_preprocessing
+
+v_Package_name='tmux'
+v_Package_version='3.5a'
+
+v_Package_archive="${PWD}/${v_Package_name}-${v_Package_version}.tar.gz"
+
+[ -f "${v_Package_archive}" ] || wget --continue --output-document="${v_Package_archive}" "https://github.com/tmux/tmux/archive/refs/tags/${v_Package_version}.tar.gz"
+
+cd "${v_Build_Dir}" || exit 1
+
+v_Package_dir="${v_Package_name}-${v_Package_version}"
+
+[ -d "${v_Package_dir}" ] && rm -rf "${v_Package_dir}"
+
+tar -xf "${v_Package_archive}"
+
+cd "${v_Package_dir}"
+
+v_Package_Prefix="${v_Prefix_Dir}/${v_Package_name}" 
+
+[ -d "${v_Package_Prefix}" ] && rm -rf "${v_Package_Prefix}" 
+
+export CFLAGS+=" -static -Os"
+export CFLAGS+=" -I${v_Prefix_Dir}/include"
+export CFLAGS+=" -I${v_Prefix_Dir}/include/ncursesw"
+export LDFLAGS=" -L${v_Prefix_Dir}/lib -static"
+
+./autogen.sh
+
+LIBS="-lncursesw" ./configure --prefix="${v_Package_Prefix}" \
+	    --host="${v_Host_Platform}" \
+	    --build="${v_Build_Platform}"
+
+make -j3
+make INSTALL_STRIP_FLAG="--strip-program=${v_Strip_Program} -s" install-strip ; echo "${?}"
+mkdir -p "${v_Release_Dir}"
+cp --no-dereference "${v_Package_Prefix}/bin/tmux" "${v_Release_Dir}"
