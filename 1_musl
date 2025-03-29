@@ -2,23 +2,26 @@
 
 source ./0_preprocessing
 
-v_package_version='1.2.5'
+v_Package_name='musl'
+v_Package_version='1.2.5'
 
-v_package_archive="${PWD}/musl-${v_package_version}.tar.gz"
+v_Package_archive="${PWD}/${v_Package_name}-${v_Package_version}.tar.gz"
+
+wget --continue --output-document="${v_Package_archive}" "https://musl.libc.org/releases/${v_Package_name}-${v_Package_version}.tar.gz"
 
 cd "${v_Build_Dir}" || exit 1
 
-v_package_dir="musl-${v_package_version}"
+v_Package_dir="musl-${v_Package_version}"
 
-[ -d "${v_package_dir}" ] && rm -rf "${v_package_dir}"
+[ -d "${v_Package_dir}" ] && rm -rf "${v_Package_dir}"
 
-tar -xf "${v_package_archive}"
+tar -xf "${v_Package_archive}"
 
-cd "${v_package_dir}"
+cd "${v_Package_dir}"
 
 ./configure --prefix="${v_Prefix_Dir}" \
 	    --host="${v_Host_Platform}" \
 	    --build="${v_Build_Platform}"
 
-make -j1
+make -j2
 make install

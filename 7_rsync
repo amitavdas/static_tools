@@ -1,7 +1,5 @@
 #!/bin/bash
 
-source /etc/profile.d/arm-linux-musleabihf-cross.sh
-
 source ./0_preprocessing
 
 v_Package_name='rsync'
@@ -39,5 +37,7 @@ export LDFLAGS="-L${v_Prefix_Dir}/lib -static"
     	    --disable-xxhash
 
 
-make -j1
-make install-strip INSTALL_STRIP="--strip-program=${v_Strip_Program}" ; echo $?
+make -j2
+make INSTALLCMD="install -c --strip-program=${v_Strip_Program}" install-strip ; echo "make exited with status: ${?}"
+mkdir -p "${v_Release_Dir}"
+cp "${v_Package_Prefix}/bin/"rsync* "${v_Release_Dir}"
