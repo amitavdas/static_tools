@@ -1,0 +1,37 @@
+#!/bin/bash
+
+source /etc/profile.d/arm-linux-musleabihf-cross.sh
+
+source ./0_preprocessing
+
+v_Vim_version='9.1.1255'
+
+v_Vim_archive="${PWD}/vim-${v_Vim_version}.tar.gz"
+
+wget --continue --output-document="${v_Vim_archive}" "https://github.com/vim/vim/archive/refs/tags/v${v_Vim_version}.tar.gz"
+
+cd "${v_Build_Dir}" || exit 1
+
+export CFLAGS="-static -Os"
+export CFLAGS="${CFLAGS} -I${v_Prefix_Dir}/include"
+export LDFLAGS="-L${v_Prefix_Dir}/lib -static"
+
+v_Vim_dir="vim-${v_Vim_version}"
+
+[ -d "${v_Vim_dir}" ] && rm -rf "${v_Vim_dir}"
+
+tar -xf "${v_Vim_archive}"
+
+cd "${v_Vim_dir}"
+
+v_Vim_Prefix="${v_Prefix_Dir}/vim" 
+
+[ -d "${v_Vim_Prefix}" ] && rm -rf "${v_Vim_Prefix}" 
+
+LIBS="-lncursesw" ./configure --prefix="${v_Vim_Prefix}" \
+	    --host=arm-linux-musleabihf \
+	    --build=x86_64-pc-linux-gnu \
+	    --with-features=normal
+
+make -j1
+make STRIP="${v_Strip_Program}" install ; echo $?

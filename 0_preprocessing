@@ -1,0 +1,15 @@
+
+source /etc/profile.d/arm-linux-musleabihf-cross.sh
+
+export v_Build_Dir="${PWD}/build"
+export v_Prefix_Dir="${v_Build_Dir}/pseudo_usr"
+export v_Release_Dir="${PWD}/releases"
+
+export v_Sysroot='/opt/muslcc/arm-linux-musleabihf-cross'
+export v_Host_Platform='arm-linux-musleabihf'
+export v_Build_Platform='x86_64-pc-linux-gnu'
+export v_Temporary_Platform='gcc'
+export v_Strip_Program='${v_Host_Platform}-strip'
+export v_Build_Env=''
+
+mkdir -p "${v_Prefix_Dir}"

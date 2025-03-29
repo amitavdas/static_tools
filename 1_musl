@@ -1,0 +1,24 @@
+#!/bin/bash
+
+source ./0_preprocessing
+
+v_package_version='1.2.5'
+
+v_package_archive="${PWD}/musl-${v_package_version}.tar.gz"
+
+cd "${v_Build_Dir}" || exit 1
+
+v_package_dir="musl-${v_package_version}"
+
+[ -d "${v_package_dir}" ] && rm -rf "${v_package_dir}"
+
+tar -xf "${v_package_archive}"
+
+cd "${v_package_dir}"
+
+./configure --prefix="${v_Prefix_Dir}" \
+	    --host="${v_Host_Platform}" \
+	    --build="${v_Build_Platform}"
+
+make -j1
+make install

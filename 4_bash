@@ -1,0 +1,64 @@
+#!/bin/bash
+
+source /etc/profile.d/arm-linux-musleabihf-cross.sh
+
+source ./0_preprocessing
+
+v_Bash_version='5.2.37'
+
+v_Bash_archive="${PWD}/bash-${v_Bash_version}.tar.gz"
+
+cd "${v_Build_Dir}" || exit 1
+
+export CFLAGS="-static -Os"
+export CFLAGS="${CFLAGS} -I${v_Prefix_Dir}/include"
+export LDFLAGS="-L${v_Prefix_Dir}/lib -static"
+
+v_Bash_dir="bash-${v_Bash_version}"
+
+[ -d "${v_Bash_dir}" ] && rm -rf "${v_Bash_dir}"
+
+tar -xf "${v_Bash_archive}"
+
+cd "${v_Bash_dir}"
+
+v_Readline='readline' # if zero-length string, then built without readline
+
+v_Bash_Prefix="${v_Prefix_Dir}/bash"
+
+[ -n "${v_Readline}" ] && v_Bash_Prefix="${v_Prefix_Dir}/bash_readline" 
+
+[ -d "${v_Bash_Prefix}" ] && rm -rf "${v_Bash_Prefix}" 
+
+if [ -z "${v_Readline}" ]; then
+
+    ./configure --prefix="${v_Bash_Prefix}" \
+		--without-bash-malloc \
+		--host=arm-linux-musleabihf \
+		--build=x86_64-pc-linux-gnu
+else
+    LIBS="-lncursesw" ./configure --prefix="${v_Bash_Prefix}" \
+		--host="${v_Host_Platform}" \
+		--build="${v_Build_Platform}" \
+		--without-bash-malloc \
+		--enable-readline \
+		--with-installed-readline \
+		--enable-static-link \
+		--enable-disabled-builtins \
+		--disable-threads
+
+#	--enable-strict-posix-default \
+#	ac_cv_func_strtoimax=yes
+#	--disable-nls \
+fi
+
+make -j2
+make install-strip INSTALL_PROGRAM="install -c --strip-program=${v_Strip_Program}" ; echo $?
+
+#find "${v_Bash_Prefix}" -type f -exec arm-linux-musleabihf-strip {} \;
+
+# mkdir -p "${v_Release_Dir}"
+# cp ./bash "${v_Release_Dir}/"
+# cd "${v_Release_Dir}" || exit 1
+# "${v_Strip_Program}" bash
+# [ -n "${v_Readline}" ] && mv ./bash bash_with_readline

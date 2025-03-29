@@ -1,0 +1,43 @@
+#!/bin/bash
+
+source /etc/profile.d/arm-linux-musleabihf-cross.sh
+
+source ./0_preprocessing
+
+v_Package_name='rsync'
+v_Package_version='3.4.1'
+
+v_Package_archive="${PWD}/${v_Package_name}-${v_Package_version}.tar.gz"
+
+wget --continue --output-document="${v_Package_archive}" "https://github.com/RsyncProject/rsync/archive/refs/tags/v${v_Package_version}.tar.gz"
+
+cd "${v_Build_Dir}" || exit 1
+
+v_Package_dir="${v_Package_name}-${v_Package_version}"
+
+[ -d "${v_Package_dir}" ] && rm -rf "${v_Package_dir}"
+
+tar -xf "${v_Package_archive}"
+
+cd "${v_Package_dir}"
+
+v_Package_Prefix="${v_Prefix_Dir}/${v_Package_name}" 
+
+[ -d "${v_Package_Prefix}" ] && rm -rf "${v_Package_Prefix}" 
+
+export CFLAGS="-static -Os"
+export CFLAGS="${CFLAGS} -I${v_Prefix_Dir}/include"
+export LDFLAGS="-L${v_Prefix_Dir}/lib -static"
+
+./configure --prefix="${v_Package_Prefix}" \
+	    --host=arm-linux-musleabihf \
+	    --build=x86_64-pc-linux-gnu \
+	    --disable-md2man \
+	    --disable-zstd \
+	    --disable-lz4 \
+	    --disable-openssl \
+    	    --disable-xxhash
+
+
+make -j1
+make install-strip INSTALL_STRIP="--strip-program=${v_Strip_Program}" ; echo $?

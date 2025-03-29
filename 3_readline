@@ -1,0 +1,30 @@
+#!/bin/bash
+
+source /etc/profile.d/arm-linux-musleabihf-cross.sh
+
+source ./0_preprocessing
+
+v_Readline_version='8.2.13'
+
+v_Readline_archive="${PWD}/readline-${v_Readline_version}.tar.gz"
+
+cd "${v_Build_Dir}" || exit 1
+
+export CFLAGS="-static -Os"
+export CFLAGS="${CFLAGS} -I${v_Prefix_Dir}/include"
+export LDFLAGS="-L${v_Prefix_Dir}/lib -static"
+
+v_Readline_dir="readline-${v_Readline_version}"
+
+[ -d "${v_Readline_dir}" ] && rm -rf "${v_Readline_dir}"
+
+tar -xf "${v_Readline_archive}"
+
+cd "${v_Readline_dir}"
+
+./configure --prefix="${v_Prefix_Dir}" \
+	    --host="${v_Host_Platform}" \
+	    --build="${v_Build_Platform}"
+
+make -j1
+make install

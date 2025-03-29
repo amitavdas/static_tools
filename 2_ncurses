@@ -1,0 +1,36 @@
+#!/bin/bash
+
+source /etc/profile.d/arm-linux-musleabihf-cross.sh
+
+source ./0_preprocessing
+
+v_nCurses_version='6_5_20250322'
+
+v_nCurses_archive="${PWD}/v${v_nCurses_version}.tar.gz"
+
+cd "${v_Build_Dir}" || exit 1
+
+export CFLAGS="-static -Os"
+export CFLAGS="${CFLAGS} -I${v_Prefix_Dir}/include"
+export LDFLAGS="-L${v_Prefix_Dir}/lib -static"
+
+v_nCurses_dir="ncurses-snapshots-${v_nCurses_version}"
+
+[ -d "${v_nCurses_dir}" ] && rm -rf "${v_nCurses_dir}"
+
+tar -xf "${v_nCurses_archive}"
+
+cd "${v_nCurses_dir}"
+
+./configure --prefix="${v_Prefix_Dir}" \
+	    --host="${v_Host_Platform}" \
+	    --build="${v_Build_Platform}" \
+	    --with-strip-program="${v_Strip_Program}" \
+	    --with-build-cc="${v_Temporary_Platform}" \
+            --without-shared \
+	    --with-normal \
+	    --without-ada \
+	    --without-debug
+
+make -j1
+make install

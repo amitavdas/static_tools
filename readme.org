@@ -1,0 +1,15 @@
+Inspired by [[https://github.com/robxu9/bash-static][bash-static]] from robxu9.
+
+Uses static cross-musl-based toolchains provided by [[https://aur.archlinux.org/packages/muslcc-arm-linux-musleabihf-cross-bin][muslcc-arm-linux-musleabihf-cross-bin]] from AUR.
+
+But it can be used elsewhere by utilizing the same toolchain downloaded from [[http://musl.cc/][musl.cc]].
+
+6_xxhash does not work.
+
+7_rsync  builds without xxhash.
+
+May fix this in future.
+
+Or if you can build xxhash, please let me know.
+
+I mostly use this for my Rpi Zero W.
