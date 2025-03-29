@@ -12,34 +12,37 @@ v_Package_archive="${PWD}/${v_Package_name}-${v_Package_version}.tar.gz"
 
 cd "${v_Build_Dir}" || exit 1
 
-export CFLAGS="-static -Os -std=c99"
-export CFLAGS="${CFLAGS} -I${v_Prefix_Dir}/include"
-export CFLAGS="${CFLAGS} -DS_ISTXT=S_ISVTX" # Suggested by AI, however, I did not see Alpine or Arch use such a thing
+export CFLAGS+=" -static -Os -std=c99 -D_XOPEN_SOURCE=500 -D_BSD_SOURCE"
+export CFLAGS+=" -I${v_Prefix_Dir}/include"
+#export CFLAGS+=" -DS_ISTXT=S_ISVTX" # Suggested by AI, however, I did not see Alpine or Arch use such a thing
 #export CFLAGS="${CFLAGS} -DFPARSELN_UNESCALL=0x01 -DFPARSELN_UNESCCOMM=0x02 -DFPARSELN_UNESCCONT=0x04 -DFPARSELN_UNESCESC=0x08 -DFPARSELN_UNESCREST=0x10"
 #export CFLAGS="${CFLAGS} -D_BSD_SOURCE -D_DEFAULT_SOURCE -D__BSD_VISIBLE -D_GNU_SOURCE"
 
 
 
-export LDFLAGS="-L${v_Prefix_Dir}/lib -static"
+export LDFLAGS+=" -L${v_Prefix_Dir}/lib -static"
 
-v_Package_dir="${v_Package_name}-${v_Package_version}"
+v_Package_dir="${PWD}/${v_Package_name}-${v_Package_version}"
 
 [ -d "${v_Package_dir}" ] && rm -rf "${v_Package_dir}"
 
 tar -xf "${v_Package_archive}"
 
-cd "${v_Package_dir}"
-
 v_Package_Prefix="${v_Prefix_Dir}/${v_Package_name}" 
 
 [ -d "${v_Package_Prefix}" ] && rm -rf "${v_Package_Prefix}" 
 
-./autogen
+
+git clone https://gitlab.alpinelinux.org/alpine/aports.git --depth=1
+cd aports/main/bsd-compat-headers
+install -Dm644 -t "${v_Prefix_Dir}/include/sys" \
+		cdefs.h queue.h tree.h
+
+cd "${v_Package_dir}"
 
 ./configure --prefix="${v_Package_Prefix}" \
-	    --host=arm-linux-musleabihf \
-	    --build=x86_64-pc-linux-gnu \
-            --disable-shared
+	    --host="${v_Host_Platform}" \
+	    --build="${v_Build_Platform}"
 
-make -j1
+make -j2
 #make STRIP="${v_Strip_Program}" install ; echo $?

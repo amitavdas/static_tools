@@ -5,3 +5,12 @@ releases/
 *.tar*
 .#*
 \#*
+*~
+libbsd*/
+libressl*/
+ncurses*/
+avahi*/
+libdaemon*/
+libexpat*/
+coreutils*/
+libevent-*/

@@ -1,14 +1,16 @@
 
-source /etc/profile.d/arm-linux-musleabihf-cross.sh
+export v_Sysroot='/home/bari/HWD/mounts/temp/experiment/git/armv6-linux-musleabihf-cross'
+export v_Sysroot_Bin="${v_Sysroot}/bin"
 
 export v_Build_Dir="${PWD}/build"
 export v_Prefix_Dir="${v_Build_Dir}/pseudo_usr"
 export v_Release_Dir="${PWD}/releases"
 
-export v_Sysroot='/opt/muslcc/arm-linux-musleabihf-cross'
-export v_Host_Platform='arm-linux-musleabihf'
+export v_Host_Platform='armv6-linux-musleabihf'
 export v_Build_Platform='x86_64-pc-linux-gnu'
 export v_Temporary_Platform='gcc'
 export v_Strip_Program="${v_Host_Platform}-strip"
+
+export PATH="${v_Sysroot_Bin}:${PATH}"
 
 mkdir -p "${v_Prefix_Dir}"

@@ -2,12 +2,12 @@
 
 source ./00_preprocessing
 
-v_Package_name='rsync'
-v_Package_version='3.4.1'
+v_Package_name='coreutils'
+v_Package_version='9.6'
 
 v_Package_archive="${PWD}/${v_Package_name}-${v_Package_version}.tar.gz"
 
-[ -f "${v_Package_archive}" ] || wget --continue --output-document="${v_Package_archive}" "https://github.com/RsyncProject/rsync/archive/refs/tags/v${v_Package_version}.tar.gz"
+[ -f "${v_Package_archive}" ] || wget --continue --output-document="${v_Package_archive}" "https://ftp.gnu.org/gnu/coreutils/coreutils-${v_Package_version}.tar.xz"
 
 cd "${v_Build_Dir}" || exit 1
 
@@ -29,13 +29,9 @@ export LDFLAGS="-L${v_Prefix_Dir}/lib -static"
 
 ./configure --prefix="${v_Package_Prefix}" \
 	    --host="${v_Host_Platform}" \
-	    --build="${v_Build_Platform}" \
-	    --disable-md2man \
-	    --disable-zstd \
-	    --disable-lz4 \
-	    --disable-openssl
+	    --build="${v_Build_Platform}"
 
 make -j2
 make INSTALLCMD="install -c --strip-program=${v_Strip_Program}" install-strip ; echo "make exited with status: ${?}"
 mkdir -p "${v_Release_Dir}"
-cp --no-dereference "${v_Package_Prefix}/bin/"rsync* "${v_Release_Dir}"
+#cp --no-dereference "${v_Package_Prefix}/bin/"* "${v_Release_Dir}"

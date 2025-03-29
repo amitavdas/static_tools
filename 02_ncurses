@@ -2,23 +2,27 @@
 
 source ./00_preprocessing
 
-v_nCurses_version='6_5_20250322'
+v_Package_name='ncurses'
+v_Package_version='6_5_20250322'
 
-v_nCurses_archive="${PWD}/v${v_nCurses_version}.tar.gz"
+v_Package_archive="${PWD}/${v_Package_name}-${v_Package_version}.tar.gz"
+
+[ -f "${v_Package_archive}" ] || wget --continue --output-document="${v_Package_archive}" "https://github.com/ThomasDickey/ncurses-snapshots/archive/refs/tags/v${v_Package_version}.tar.gz"
 
 cd "${v_Build_Dir}" || exit 1
+
 
 export CFLAGS="-static -Os"
 export CFLAGS="${CFLAGS} -I${v_Prefix_Dir}/include"
 export LDFLAGS="-L${v_Prefix_Dir}/lib -static"
 
-v_nCurses_dir="ncurses-snapshots-${v_nCurses_version}"
+v_Package_dir="ncurses-snapshots-${v_Package_version}"
 
-[ -d "${v_nCurses_dir}" ] && rm -rf "${v_nCurses_dir}"
+[ -d "${v_Package_dir}" ] && rm -rf "${v_Package_dir}"
 
-tar -xf "${v_nCurses_archive}"
+tar -xf "${v_Package_archive}"
 
-cd "${v_nCurses_dir}"
+cd "${v_Package_dir}"
 
 ./configure --prefix="${v_Prefix_Dir}" \
 	    --host="${v_Host_Platform}" \
@@ -31,4 +35,4 @@ cd "${v_nCurses_dir}"
 	    --without-debug
 
 make -j1
-make install
+make install && echo $?

@@ -13,12 +13,13 @@ Features:
     + static vim with normal features (can be built with huge also).
     + static rsync with xxhash support.
       * zstd, lz4, openssl are not supported yet
-	 
+    + static coreutils
+
+Only vim and bash has been somewhat tested.
 
 Issues:
     + 06_xxhash +does not work+ works but xxhsum binaries are not static.
     + 07_rsync  builds +without+ with xxhash statically linked.
-    + 08, 09, 10, 11 do not build.
 
 May fix this in future.
 

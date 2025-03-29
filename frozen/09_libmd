@@ -2,14 +2,12 @@
 
 source ./00_preprocessing
 
-echo $PATH
-
-v_Package_name='musl'
-v_Package_version='1.2.5'
+v_Package_name='libmd'
+v_Package_version='1.1.0'
 
 v_Package_archive="${PWD}/${v_Package_name}-${v_Package_version}.tar.gz"
 
-[ -f "${v_Package_archive}" ] || wget --continue --output-document="${v_Package_archive}" "https://musl.libc.org/releases/${v_Package_name}-${v_Package_version}.tar.gz"
+[ -f "${v_Package_archive}" ] || wget --continue --output-document="${v_Package_archive}" "https://archive.hadrons.org/software/libmd/libmd-${v_Package_version}.tar.xz"
 
 cd "${v_Build_Dir}" || exit 1
 
@@ -21,9 +19,13 @@ tar -xf "${v_Package_archive}"
 
 cd "${v_Package_dir}"
 
+export CFLAGS+=" -static -Os"
+export CFLAGS+=" -I${v_Prefix_Dir}/include"
+export LDFLAGS+=" -L${v_Prefix_Dir}/lib -static"
+
 ./configure --prefix="${v_Prefix_Dir}" \
 	    --host="${v_Host_Platform}" \
 	    --build="${v_Build_Platform}"
 
-make -j3
-make install
+make -j2
+make install && echo $?
