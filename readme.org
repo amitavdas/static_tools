@@ -2,7 +2,7 @@ Inspired by [[https://github.com/robxu9/bash-static][bash-static]] from robxu9.
 
 I mostly use this with my RPi Zero W.
 
-Uses static cross-musl-based toolchains provided by [[https://aur.archlinux.org/packages/muslcc-arm-linux-musleabihf-cross-bin][muslcc-arm-linux-musleabihf-cross-bin]] from AUR.
+Uses static cross-musl-based toolchains provided by [[https://more.musl.cc/11/x86_64-linux-musl/armv6-linux-musleabihf-cross.tgz][armv6-linux-musleabihf-cross]] from musl.cc.
 
 But it can be used elsewhere by utilizing the same toolchain downloaded from [[http://musl.cc/][musl.cc]].
 
