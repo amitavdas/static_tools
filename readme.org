@@ -12,6 +12,6 @@ But it can be used elsewhere by utilizing the same toolchain downloaded from [[h
 
 May fix this in future.
 
-Or if you can build xxhash, please let me know.
+Or if you manage to build xxhsum statically, please let me know.
 
-I mostly use this for my Rpi Zero W.
+I mostly use this for my RPi Zero W.
