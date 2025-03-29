@@ -9,7 +9,6 @@ export v_Sysroot='/opt/muslcc/arm-linux-musleabihf-cross'
 export v_Host_Platform='arm-linux-musleabihf'
 export v_Build_Platform='x86_64-pc-linux-gnu'
 export v_Temporary_Platform='gcc'
-export v_Strip_Program='${v_Host_Platform}-strip'
-export v_Build_Env=''
+export v_Strip_Program="${v_Host_Platform}-strip"
 
 mkdir -p "${v_Prefix_Dir}"

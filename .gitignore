@@ -1,5 +1,7 @@
 build/
 build*
+musl-*
 releases/
-*.tar.gz
+*.tar*
 .#*
+\#*

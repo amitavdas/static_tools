@@ -1,0 +1,41 @@
+#!/bin/bash
+
+source ./00_preprocessing
+
+v_Package_name='xxHash'
+v_Package_version='0.8.2'
+
+v_Package_archive="${PWD}/${v_Package_name}-${v_Package_version}.tar.gz"
+
+[ -f "${v_Package_archive}" ] || wget --continue --output-document="${v_Package_archive}" "https://github.com/Cyan4973/xxHash/archive/refs/tags/v${v_Package_version}.tar.gz"
+
+cd "${v_Build_Dir}" || exit 1
+
+v_Package_dir="${v_Package_name}-${v_Package_version}"
+
+[ -d "${v_Package_dir}" ] && rm -rf "${v_Package_dir}"
+
+tar -xf "${v_Package_archive}"
+
+cd "${v_Package_dir}"
+
+v_Package_Prefix="${v_Prefix_Dir}/${v_Package_name}" 
+
+[ -d "${v_Package_Prefix}" ] && rm -rf "${v_Package_Prefix}" 
+
+export CFLAGS="-shared" # without shared GCC defaults to building an executable
+export CFLAGS="${CFLAGS} -Os"
+export CFLAGS="${CFLAGS} -I${v_Prefix_Dir}/include"
+export CFLAGS="${CFLAGS} --sysroot=${v_Sysroot}"
+export LDFLAGS="${LDFLAGS} -L${v_Prefix_Dir}/lib"
+export LDFLAGS="${LDFLAGS} --sysroot=${v_Sysroot}"
+
+export CC="${v_Host_Platform}-gcc"
+
+
+make DISPATCH="0" bindir="${v_Package_Prefix}/bin" prefix="${v_Prefix_Dir}" CC="${CC}" LD="${LD}" CFLAGS="${CFLAGS}" LDFLAGS="${LDFLAGS}" -j1
+make bindir="${v_Package_Prefix}/bin" prefix="${v_Prefix_Dir}" CC="${CC}" LD="${LD}" CFLAGS="${CFLAGS}" LDFLAGS="${LDFLAGS}" install ; echo $?
+
+mkdir -p "${v_Release_Dir}"
+"${v_Strip_Program}" "${v_Package_Prefix}/bin/"xxhsum
+cp --no-dereference "${v_Package_Prefix}/bin/"xxh* "${v_Release_Dir}"

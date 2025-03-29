@@ -1,0 +1,45 @@
+#!/bin/bash
+
+source ./00_preprocessing
+
+v_Package_name='libbsd'
+v_Package_version='0.12.2'
+
+
+v_Package_archive="${PWD}/${v_Package_name}-${v_Package_version}.tar.gz"
+
+[ -f "${v_Package_archive}" ] || wget --continue --output-document="${v_Package_archive}" "https://libbsd.freedesktop.org/releases/libbsd-${v_Package_version}.tar.xz"
+
+cd "${v_Build_Dir}" || exit 1
+
+export CFLAGS="-static -Os -std=c99"
+export CFLAGS="${CFLAGS} -I${v_Prefix_Dir}/include"
+export CFLAGS="${CFLAGS} -DS_ISTXT=S_ISVTX" # Suggested by AI, however, I did not see Alpine or Arch use such a thing
+#export CFLAGS="${CFLAGS} -DFPARSELN_UNESCALL=0x01 -DFPARSELN_UNESCCOMM=0x02 -DFPARSELN_UNESCCONT=0x04 -DFPARSELN_UNESCESC=0x08 -DFPARSELN_UNESCREST=0x10"
+#export CFLAGS="${CFLAGS} -D_BSD_SOURCE -D_DEFAULT_SOURCE -D__BSD_VISIBLE -D_GNU_SOURCE"
+
+
+
+export LDFLAGS="-L${v_Prefix_Dir}/lib -static"
+
+v_Package_dir="${v_Package_name}-${v_Package_version}"
+
+[ -d "${v_Package_dir}" ] && rm -rf "${v_Package_dir}"
+
+tar -xf "${v_Package_archive}"
+
+cd "${v_Package_dir}"
+
+v_Package_Prefix="${v_Prefix_Dir}/${v_Package_name}" 
+
+[ -d "${v_Package_Prefix}" ] && rm -rf "${v_Package_Prefix}" 
+
+./autogen
+
+./configure --prefix="${v_Package_Prefix}" \
+	    --host=arm-linux-musleabihf \
+	    --build=x86_64-pc-linux-gnu \
+            --disable-shared
+
+make -j1
+#make STRIP="${v_Strip_Program}" install ; echo $?

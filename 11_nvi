@@ -1,0 +1,42 @@
+#!/bin/bash
+
+source ./0_preprocessing
+
+v_Package_name='nvi2'
+v_Package_version='2.2.1'
+
+v_Package_archive="${PWD}/${v_Package_name}-${v_Package_version}.tar.gz"
+
+wget --continue --output-document="${v_Package_archive}" "https://github.com/lichray/nvi2/archive/refs/tags/v${v_Package_version}.tar.gz"
+
+cd "${v_Build_Dir}" || exit 1
+
+v_Package_dir="${v_Package_name}-${v_Package_version}"
+
+[ -d "${v_Package_dir}" ] && rm -rf "${v_Package_dir}"
+
+tar -xf "${v_Package_archive}"
+
+cd "${v_Package_dir}"
+
+v_Package_Prefix="${v_Prefix_Dir}/${v_Package_name}" 
+
+[ -d "${v_Package_Prefix}" ] && rm -rf "${v_Package_Prefix}" 
+
+export CFLAGS="-static -Os"
+export CFLAGS="${CFLAGS} -I${v_Prefix_Dir}/include"
+export LDFLAGS="-L${v_Prefix_Dir}/lib -static"
+
+cmake -S . -B ./build \
+	    -DCMAKE_SYSROOT="${v_Sysroot}" \
+	    -DCMAKE_C_COMPILER="${v_Host_Platform}-gcc" \
+	    -DCMAKE_C_COMPILER_LINKER="${v_Host_Platform}-ld" \
+	    -DCMAKE_INSTALL_PREFIX="${v_Package_Prefix}" \
+	    -DCMAKE_BUILD_TYPE=Release
+
+cd ./build || exit 1
+make -j2
+
+#make INSTALLCMD="install -c --strip-program=${v_Strip_Program}" install-strip ; echo "make exited with status: ${?}"
+#mkdir -p "${v_Release_Dir}"
+#cp "${v_Package_Prefix}/bin/"rsync* "${v_Release_Dir}"

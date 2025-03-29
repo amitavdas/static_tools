@@ -4,9 +4,11 @@ Uses static cross-musl-based toolchains provided by [[https://aur.archlinux.org/
 
 But it can be used elsewhere by utilizing the same toolchain downloaded from [[http://musl.cc/][musl.cc]].
 
-6_xxhash does not work.
+06_xxhash +does not work+ works but xxhsum binaries are not static.
 
-7_rsync  builds without xxhash.
+07_rsync  builds +without+ with xxhash statically linked.
+
+08, 09, 10, 11 do not build.
 
 May fix this in future.
 

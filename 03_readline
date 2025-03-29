@@ -1,8 +1,6 @@
 #!/bin/bash
 
-source /etc/profile.d/arm-linux-musleabihf-cross.sh
-
-source ./0_preprocessing
+source ./00_preprocessing
 
 v_Readline_version='8.2.13'
 

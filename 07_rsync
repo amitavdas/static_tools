@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source ./0_preprocessing
+source ./00_preprocessing
 
 v_Package_name='rsync'
 v_Package_version='3.4.1'
@@ -33,11 +33,9 @@ export LDFLAGS="-L${v_Prefix_Dir}/lib -static"
 	    --disable-md2man \
 	    --disable-zstd \
 	    --disable-lz4 \
-	    --disable-openssl \
-    	    --disable-xxhash
-
+	    --disable-openssl
 
 make -j2
 make INSTALLCMD="install -c --strip-program=${v_Strip_Program}" install-strip ; echo "make exited with status: ${?}"
 mkdir -p "${v_Release_Dir}"
-cp "${v_Package_Prefix}/bin/"rsync* "${v_Release_Dir}"
+cp --no-dereference "${v_Package_Prefix}/bin/"rsync* "${v_Release_Dir}"

@@ -1,0 +1,43 @@
+#!/bin/bash
+
+source ./0_preprocessing
+
+v_Package_name='db'
+v_Package_version='1.85'
+
+v_Package_archive="${PWD}/${v_Package_name}-${v_Package_version}.tar.gz"
+
+wget --continue --output-document="${v_Package_archive}" "https://github.com/berkeleydb/libdb/releases/download/v${v_Package_version}/db.${v_Package_version}.tar.gz"
+
+cd "${v_Build_Dir}" || exit 1
+
+v_Package_dir="${v_Package_name}.${v_Package_version}"
+
+[ -d "${v_Package_dir}" ] && rm -rf "${v_Package_dir}"
+
+tar -xf "${v_Package_archive}"
+
+cd "${v_Package_dir}/PORT/linux"
+
+v_Package_Prefix="${v_Prefix_Dir}/${v_Package_name}" 
+
+[ -d "${v_Package_Prefix}" ] && rm -rf "${v_Package_Prefix}" 
+
+export CFLAGS="-static"
+export CFLAGS="${CFLAGS} -Os"
+export CFLAGS="${CFLAGS} -I${v_Prefix_Dir}/include"
+export CFLAGS="${CFLAGS} --sysroot=${v_Sysroot}"
+export LDFLAGS="-static"
+export LDFLAGS="${LDFLAGS} -L${v_Prefix_Dir}/lib"
+export LDFLAGS="${LDFLAGS} --sysroot=${v_Sysroot}"
+
+export CC="${v_Host_Platform}-gcc"
+export LD="${v_Host_Platform}-ld"
+
+ls
+
+make prefix="${v_Prefix_Dir}" CC="${CC}" LD="${LD}" CFLAGS="${CFLAGS}" LDFLAGS="${LDFLAGS}" -j1
+
+#make INSTALLCMD="install -c --strip-program=${v_Strip_Program}" install-strip ; echo "make exited with status: ${?}"
+#mkdir -p "${v_Release_Dir}"
+#cp "${v_Package_Prefix}/bin/"rsync* "${v_Release_Dir}"
