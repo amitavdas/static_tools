@@ -12,10 +12,10 @@ Features:
     + static bash with readline support.
     + static vim with normal features (can be built with huge also).
     + static rsync with xxhash support.
-      - Not supported yet
-	* zstd
-	* lz4
-	* openssl
+      * Not supported yet
+	- zstd
+	- lz4
+	- openssl
 
 Issues:
     + 06_xxhash +does not work+ works but xxhsum binaries are not static.
